@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Automação Cisco</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="subtitle">Desafio de automação — Parte 1</p>
+        <h1>Configuração de switch Cisco</h1>
+      </header>
+
+      {% if errors %}
+        <section class="message error" role="alert">
+          <strong>Não foi possível concluir a ação.</strong>
+          <ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        </section>
+      {% endif %}
+
+      <section class="card">
+        <h2>1. Configuração desejada</h2>
+        <form method="post">
+          <label>
+            Hostname
+            <input name="hostname" value="{{ form.hostname }}" maxlength="63" required>
+          </label>
+
+          <table>
+            <thead><tr><th>VLAN</th><th>Nome</th><th>Ações</th></tr></thead>
+            <tbody id="vlan-rows">
+              {% for vlan_id in form.vlan_id %}
+              <tr>
+                <td><input type="number" name="vlan_id" value="{{ vlan_id }}" min="2" max="4094" aria-label="ID da VLAN" required></td>
+                <td><input type="text" name="vlan_name" value="{{ form.vlan_name[loop.index0] }}" maxlength="32" aria-label="Nome da VLAN" required></td>
+                <td><button type="button" class="secondary remove-vlan">Remover</button></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <button id="add-vlan" type="button" class="secondary">Adicionar VLAN</button>
+
+          <div class="buttons">
+            <button name="action" value="apply" type="submit">Aplicar configuração</button>
+          </div>
+
+          <fieldset>
+            <legend>Dados de conexão</legend>
+            <p class="hint">Informe o endereço, porta e credenciais do switch que receberá a configuração.</p>
+            <div class="connection-grid">
+              <label>IP ou DNS<input name="host" value="{{ form.host }}" placeholder="192.168.56.10"></label>
+              <label>Porta<input name="port" type="number" value="{{ form.port }}" min="1" max="65535"></label>
+              <label>Usuário<input name="username" value="{{ form.username }}"></label>
+              <label>Senha<input name="password" type="password"></label>
+              <label>Enable secret <small>(opcional)</small><input name="secret" type="password"></label>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+
+      {% if result and result.kind == 'validation' %}
+        <section class="card result {% if result.validation_ok %}success-border{% else %}warning-border{% endif %}">
+          {% if result.validation_ok %}
+            <h2>Configuração validada</h2>
+            <p>Hostname e VLANs correspondem à configuração solicitada.</p>
+          {% else %}
+            <h2>Configuração com divergências</h2>
+            <ul>{% for issue in result.issues %}<li>{{ issue }}</li>{% endfor %}</ul>
+          {% endif %}
+
+          <p><strong>Origem dos dados:</strong> {{ result.source }}</p>
+          <p><strong>Backup:</strong> <code>{{ result.backup_relative }}</code></p>
+          <p class="hint">O arquivo de backup contém a saída de <code>show running-config</code> usada nesta validação.</p>
+
+          <table>
+            <thead><tr><th>VLAN observada</th><th>Nome</th></tr></thead>
+            <tbody>
+              {% for vlan_id, vlan_name in result.snapshot.vlans|dictsort %}
+                <tr><td>{{ vlan_id }}</td><td>{{ vlan_name }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          {% if result.configuration_output %}
+            <details><summary>Saída real da configuração</summary><pre>{{ result.configuration_output }}</pre></details>
+            <details><summary>Saída real do salvamento</summary><pre>{{ result.save_output }}</pre></details>
+          {% endif %}
+        </section>
+      {% endif %}
+
+    </main>
+    <template id="vlan-row-template">
+      <tr>
+        <td><input type="number" name="vlan_id" min="2" max="4094" aria-label="ID da VLAN" required></td>
+        <td><input type="text" name="vlan_name" maxlength="32" aria-label="Nome da VLAN" required></td>
+        <td><button type="button" class="secondary remove-vlan">Remover</button></td>
+      </tr>
+    </template>
+    <script>
+      const vlanRows = document.getElementById('vlan-rows');
+      document.getElementById('add-vlan').addEventListener('click', () => {
+        const row = document.getElementById('vlan-row-template').content.cloneNode(true);
+        vlanRows.appendChild(row);
+        vlanRows.lastElementChild.querySelector('input').focus();
+      });
+      vlanRows.addEventListener('click', (event) => {
+        const button = event.target.closest('.remove-vlan');
+        if (button) button.closest('tr').remove();
+      });
+    </script>
+  </body>
+</html>
