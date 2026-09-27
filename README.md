@@ -1,4 +1,4 @@
-# Network Automation Challenge
+﻿# Network Automation Challenge
 
 Projeto de automação de redes dividido em duas partes:
 
@@ -19,7 +19,6 @@ O script também executa o salvamento da configuração, cria backup da running-
 | 20 | VLAN_VOZ |
 | 50 | VLAN_SEGURANCA |
 
-No ambiente de teste, foi utilizado `VLAN_SEGURANCA` porque o Cisco IOL L2 apresentou erro com o caractere `Ç`.
 
 ### Como executar
 
@@ -49,3 +48,7 @@ O teste foi realizado no Cisco CML DevNet Sandbox, utilizando Telnet na porta 23
 - [VLANs e hostname na CLI](evidence/03-cli-vlans-hostname.png)
 - [Backup local](evidence/04-backup-local.png)
 - [Alerta de validação](evidence/05-alerta-validacao.png)
+
+## Parte 2 - VPN IPSec
+
+[Plano de automação da VPN IPSec](docs/PLANO_VPN_IPSEC.md)
