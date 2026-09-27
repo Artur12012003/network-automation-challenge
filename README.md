@@ -1,4 +1,4 @@
-﻿# Automação de switch Cisco
+﻿# Automacao switch cisco
 
 ## Objetivo
 
@@ -6,11 +6,6 @@ Configurar VLANs e hostname de um switch Cisco por um formulário web, salvar a 
 
 O projeto foi testado no Cisco CML DevNet Sandbox, em um switch Cisco IOL L2, usando Netmiko por Telnet na porta 23. A aplicação também aceita a porta 22 para conexão SSH em switches Cisco reais.
 
-## Requisitos
-
-- Windows com Python 3.10 ou superior e pip.
-- Flask e Netmiko, instalados pelo arquivo `requirements.txt`.
-- Acesso de rede ao switch, com endereço, porta e credenciais que permitam configurar e salvar.
 
 ## Instalação e execução no Windows
 
@@ -23,30 +18,15 @@ py -m pip install -r requirements.txt
 py run.py
 ```
 
-Se o PowerShell bloquear a ativação, use o Python do ambiente diretamente:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe run.py
-```
-
 Acesse [http://127.0.0.1:5000](http://127.0.0.1:5000). Para encerrar, pressione `Ctrl+C` no terminal. Reinicie a aplicação depois de alterar o código ou os templates.
 
-## Como usar
+## Utilização
 
-Informe o hostname, confira as VLANs e preencha os dados de conexão. No laboratório CML usado, a porta é 23. Depois, clique em **Aplicar configuração**.
+Informe o hostname, confira as VLANs e preencha os dados de conexão. No laboratório CML usado, a porta é 23. Depois, clique em Aplicar configuração
 
-O formulário começa com:
+O formulário começa com as vlans
 
-| ID | Nome |
-| --- | --- |
-| 10 | VLAN_DADOS |
-| 20 | VLAN_VOZ |
-| 50 | VLAN_SEGURANCA |
-
-O requisito original cita `VLAN_SEGURANÇA`, mas o CML IOL L2 usado no teste não aceitou o caractere Ç na CLI. Por isso, o teste funcional usou `VLAN_SEGURANCA`.
-
-Os botões **Adicionar VLAN** e **Remover** alteram as linhas do formulário. É necessário informar pelo menos uma VLAN, com IDs únicos entre 2 e 4094. Remover uma linha não exclui uma VLAN já existente no switch.
+Os botões Adicionar VLAN e Remover alteram as linhas do formulário. É necessário informar pelo menos uma VLAN, com IDs únicos entre 2 e 4094. Remover uma linha não exclui uma VLAN já existente no switch.
 
 ## Fluxo
 
