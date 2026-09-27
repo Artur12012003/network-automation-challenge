@@ -1,4 +1,4 @@
-"""Ponto de entrada simples: execute ``py run.py`` no Windows."""
+##Ponto de entrada simples: execute ``py run.py`` no Windows
 
 from frontend.app import app
 
