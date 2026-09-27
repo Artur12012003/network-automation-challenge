@@ -1,15 +1,29 @@
-﻿# Automacao switch cisco
+# Network Automation Challenge
 
-## Objetivo
+Projeto de automação de redes dividido em duas partes:
 
-Configurar VLANs e hostname de um switch Cisco por um formulário web, salvar a configuração, criar um backup local e conferir o resultado.
+- Parte 1: configuração de switch Cisco.
+- Parte 2: planejamento de VPN IPSec entre FortiGate e Palo Alto.
 
-O projeto foi testado no Cisco CML DevNet Sandbox, em um switch Cisco IOL L2, usando Netmiko por Telnet na porta 23. A aplicação também aceita a porta 22 para conexão SSH em switches Cisco reais.
+## Parte 1 - Switch Cisco
 
+Aplicação web em Python para configurar VLANs e hostname em um switch Cisco.
 
-## Instalação e execução no Windows
+O script também executa o salvamento da configuração, cria backup da running-config e valida o resultado.
 
-Abra o PowerShell na pasta do projeto e execute:
+### VLANs do teste
+
+| VLAN | Nome |
+| --- | --- |
+| 10 | VLAN_DADOS |
+| 20 | VLAN_VOZ |
+| 50 | VLAN_SEGURANCA |
+
+No ambiente de teste, foi utilizado `VLAN_SEGURANCA` porque o Cisco IOL L2 apresentou erro com o caractere `Ç`.
+
+### Como executar
+
+No PowerShell:
 
 ```powershell
 py -m venv .venv
@@ -18,32 +32,20 @@ py -m pip install -r requirements.txt
 py run.py
 ```
 
-Acesse [http://127.0.0.1:5000](http://127.0.0.1:5000). Para encerrar, pressione `Ctrl+C` no terminal. Reinicie a aplicação depois de alterar o código ou os templates.
+Depois, acesse:
 
-## Utilização
+http://127.0.0.1:5000
 
-Informe o hostname, confira as VLANs e preencha os dados de conexão. No laboratório CML usado, a porta é 23. Depois, clique em Aplicar configuração
+### Uso
 
-O formulário começa com as vlans
+Preencha o hostname, as VLANs e os dados de conexão do switch. Em seguida, clique em **Aplicar configuração**.
 
-Os botões Adicionar VLAN e Remover alteram as linhas do formulário. É necessário informar pelo menos uma VLAN, com IDs únicos entre 2 e 4094. Remover uma linha não exclui uma VLAN já existente no switch.
+O teste foi realizado no Cisco CML DevNet Sandbox, utilizando Telnet na porta 23. Para um switch Cisco real, a aplicação aceita SSH na porta 22.
 
-## Fluxo
+### Evidências
 
-Formulário → validação dos campos → conexão → comandos Cisco → `write memory` → `show running-config` / `show vlan brief` → backup → validação do resultado.
-
-O backend envia as VLANs e altera o hostname por último. O comando `write memory` salva a configuração para que ela seja mantida após reiniciar o switch.
-
-O backup contém a saída real de `show running-config`. Os arquivos são criados localmente em `backups/`, com hostname e data/hora no nome, e não são publicados; essa pasta está no `.gitignore`.
-
-A validação compara o hostname de `show running-config` e as VLANs de `show vlan brief` com o que foi solicitado. O frontend mostra o resultado e os alertas de divergência.
-
-## Evidências
-
-- [Formulário com hostname e VLANs](evidence/01-frontend-formulario.png)
-- [Configuração validada no frontend](evidence/02-frontend-validacao-sucesso.png)
-- [VLANs e hostname na CLI do switch](evidence/03-cli-vlans-hostname.png)
-- [Arquivos de backup local](evidence/04-backup-local.png)
-- [Alerta de divergências na validação](evidence/05-alerta-validacao.png)
-
-A captura do formulário mostra a porta 22 preenchida; o teste funcional no CML utilizou Telnet na porta 23.
+- [Formulário](evidence/01-frontend-formulario.png)
+- [Validação no frontend](evidence/02-frontend-validacao-sucesso.png)
+- [VLANs e hostname na CLI](evidence/03-cli-vlans-hostname.png)
+- [Backup local](evidence/04-backup-local.png)
+- [Alerta de validação](evidence/05-alerta-validacao.png)
